@@ -16,9 +16,10 @@ The repository currently provides:
 - Six generated test images with JSONL ground truth.
 - Adapters for Tesseract, EasyOCR, and PaddleOCR-VL.
 - A completed Tesseract `ben+eng` CPU benchmark.
+- A completed one-page PaddleOCR-VL 1.5 CPU smoke test.
 - Unit tests for schemas, adapters, preprocessing, metrics, and scoring.
 
-Tesseract is the first engine with a completed benchmark. EasyOCR and PaddleOCR-VL adapters are implemented and contract-tested, but real inference was not completed in the current Windows environment. See [Engine status](#engine-status) for details.
+Tesseract is the first engine with a completed six-page benchmark. PaddleOCR-VL has completed a one-page real-inference smoke test, while EasyOCR remains contract-tested only in the current Windows environment. See [Engine status](#engine-status) for details.
 
 ## Benchmark pipeline
 
@@ -153,22 +154,62 @@ Aggregate result:
 
 Complete predictions, boxes, confidence values, metrics, and timings are stored in `results/tesseract_baseline.json`. The current fixture indicates that degraded Bangla is the main Tesseract weakness, but the dataset is too small to generalize this result to real policy documents.
 
+### PaddleOCR-VL CPU smoke test
+
+PaddleOCR-VL 1.5 was run on the clean synthetic Bangla policy page using CPU inference. It reproduced the normalized reference text exactly: CER 0%, WER 0%, exact match true, and text score 100. Inference took 370.68 seconds (about 6 minutes 11 seconds) and used approximately 3.9 GB of working memory during the observed run. This is a one-page smoke test, not a result directly comparable with the six-page Tesseract benchmark. The detailed output is written locally to `results/paddleocr_vl_smoke.json`.
+
 ## Engine status
 
 | Engine | Status | Notes |
 |---|---|---|
 | Tesseract | Completed | CPU baseline completed with official Bengali and English models |
 | EasyOCR | Adapter tested | Real inference was blocked by the host's enterprise policy rejecting PyTorch native extensions |
-| PaddleOCR-VL | Adapter tested | Dependencies installed, but the large model download stalled before inference |
+| PaddleOCR-VL | Smoke test completed | Clean Bangla page achieved 0% CER and 0% WER in 370.68 seconds on CPU; full dataset benchmark remains pending |
 | Kraken | Planned | Requires a suitable Bengali model or separately licensed training data |
 | TrOCR | Planned | Requires validation of the Bengali checkpoint and training-data provenance |
 
-These environment failures are not accuracy conclusions about EasyOCR or PaddleOCR-VL.
+The EasyOCR environment failure is not an accuracy conclusion about that engine.
+
+## Local client demo
+
+The repository includes a dependency-free local web interface for demonstrating OCR to clients. It supports image upload and the six prepared samples, lets the presenter switch between Tesseract and PaddleOCR-VL, overlays detected regions, and provides extracted text plus downloadable structured JSON. Documents are processed on the local machine; temporary uploads are deleted immediately after inference.
+
+Prerequisites:
+
+- Complete the core setup and Tesseract setup below.
+- Install `requirements-paddle.txt` only when PaddleOCR-VL will be demonstrated.
+- Allow roughly 4 GB of available memory for PaddleOCR-VL. Its model is downloaded on first use and cached under `models/paddlex/`; model files are not committed.
+
+Start the demo from PowerShell:
+
+```powershell
+cd D:\ocr-demo
+.\venv\Scripts\Activate.ps1
+python scripts\run_local_demo.py
+```
+
+If PowerShell activation is disabled, run the environment's interpreter directly:
+
+```powershell
+.\venv\Scripts\python.exe scripts\run_local_demo.py
+```
+
+The browser opens at `http://127.0.0.1:8000`. To present the demo:
+
+1. Upload a PNG, JPEG, WebP, TIFF, or BMP image up to 15 MB, or select one of the prepared Bangla, English, or mixed-language policy samples.
+2. Choose Tesseract for a result that typically completes in under one second on the test machine.
+3. Choose PaddleOCR-VL for structured document parsing; the clean Bangla sample took about six minutes on the current CPU-only machine.
+4. Review the extracted text, processing time, text-region overlay, and reading-order blocks.
+5. Copy the text or download the engine-independent JSON result.
+6. Press `Ctrl+C` in the terminal to stop the local server.
+
+The server binds to `127.0.0.1` by default, so the interface is available only on the local computer. No frontend package manager, cloud account, API key, or paid service is required.
 
 ## Repository structure
 
 ```text
 assets/fonts/                   Open-licensed Noto fonts
+demo/                           Dependency-free local client interface
 data/synthetic/v0.1/           Tiny generated dataset and ground truth
 models/tesseract/configs/       Tracked Tesseract TSV configuration
 results/                        Selected reproducible benchmark results

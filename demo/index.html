@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Local multilingual policy-document OCR demonstration">
+    <title>PolicyLens OCR</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="PolicyLens OCR home">
+        <span class="brand-mark">PL</span>
+        <span><strong>PolicyLens</strong><small>Multilingual document intelligence</small></span>
+      </a>
+      <span class="local-badge"><span></span>Local CPU demo</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Bangla + English OCR</p>
+          <h1>Turn policy documents into usable text.</h1>
+          <p class="lede">Compare open-source OCR on paragraphs, bullet lists, tables, and mixed-language documents—processed privately on this computer.</p>
+        </div>
+        <div class="privacy-card">
+          <strong>Private by design</strong>
+          <span>No cloud API. No document retention. No paid service.</span>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="control-panel">
+          <div class="step-label">01 · Select a document</div>
+          <label class="dropzone" id="dropzone" for="file-input">
+            <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp,image/tiff,image/bmp">
+            <span class="upload-symbol">↑</span>
+            <strong>Drop an image here</strong>
+            <span>or click to browse · maximum 15 MB</span>
+          </label>
+          <div class="divider"><span>or use a prepared sample</span></div>
+          <select id="sample-select" aria-label="Prepared sample">
+            <option value="">Choose a sample document</option>
+          </select>
+
+          <div class="step-label engine-label">02 · Choose an OCR engine</div>
+          <div id="engine-list" class="engine-list"></div>
+
+          <button class="run-button" id="run-button" disabled>
+            <span>Run OCR analysis</span><span aria-hidden="true">→</span>
+          </button>
+          <p class="engine-note" id="engine-note">Select a document to begin.</p>
+        </aside>
+
+        <section class="document-panel">
+          <div class="panel-heading">
+            <div><span class="section-kicker">Document preview</span><strong id="document-name">No document selected</strong></div>
+            <button class="text-button" id="clear-button" hidden>Clear</button>
+          </div>
+          <div class="preview-empty" id="preview-empty">
+            <div class="document-icon"><i></i><i></i><i></i></div>
+            <strong>Your document will appear here</strong>
+            <span>Detected text regions will be highlighted after analysis.</span>
+          </div>
+          <div class="preview-stage" id="preview-stage" hidden>
+            <img id="preview-image" alt="Selected policy document">
+            <svg id="overlay" aria-label="Detected OCR regions"></svg>
+          </div>
+        </section>
+      </section>
+
+      <section class="results" id="results" hidden>
+        <div class="results-heading">
+          <div><p class="eyebrow">Analysis complete</p><h2>OCR results</h2></div>
+          <div class="actions">
+            <button class="secondary-button" id="copy-button">Copy text</button>
+            <button class="secondary-button" id="download-button">Download JSON</button>
+          </div>
+        </div>
+        <div class="metrics">
+          <article><span>Engine</span><strong id="metric-engine">—</strong></article>
+          <article><span>Processing time</span><strong id="metric-time">—</strong></article>
+          <article><span>Text regions</span><strong id="metric-blocks">—</strong></article>
+          <article><span>Execution</span><strong>CPU · Local</strong></article>
+        </div>
+        <div class="output-grid">
+          <article class="output-card">
+            <div class="card-title"><strong>Extracted text</strong><span id="character-count">0 characters</span></div>
+            <pre id="text-output" lang="bn"></pre>
+          </article>
+          <article class="output-card">
+            <div class="card-title"><strong>Detected structure</strong><span>Reading order</span></div>
+            <div class="blocks-list" id="blocks-list"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div class="status-overlay" id="status-overlay" hidden role="status" aria-live="polite">
+      <div class="status-card">
+        <div class="spinner"></div>
+        <p class="eyebrow">Local processing</p>
+        <h2 id="status-title">Reading your document</h2>
+        <p id="status-detail">The OCR engine is analyzing layout and text.</p>
+        <strong id="elapsed-time">00:00</strong>
+        <small>Keep this page open. PaddleOCR-VL may take several minutes on CPU.</small>
+      </div>
+    </div>
+    <div class="toast" id="toast" hidden></div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
