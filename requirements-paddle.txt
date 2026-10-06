@@ -1,0 +1,6 @@
+-r requirements.txt
+
+# Optional experimental PaddleOCR-VL adapter
+paddleocr==3.7.0
+paddlepaddle==3.3.1
+paddlex[ocr]==3.7.2

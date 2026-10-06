@@ -1,0 +1,4 @@
+# Core dataset generation, preprocessing, and image utilities
+numpy>=1.24,<2.4
+opencv-contrib-python==4.10.0.84
+Pillow>=10,<13

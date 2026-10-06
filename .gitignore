@@ -1,0 +1,32 @@
+# Python environments and bytecode
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Tool and model caches
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+models/**
+!models/tesseract/
+!models/tesseract/LICENSE
+!models/tesseract/configs/
+!models/tesseract/configs/tsv
+
+# Keep the verified baseline; ignore scratch and future generated results
+results/**
+!results/tesseract_baseline.json
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
